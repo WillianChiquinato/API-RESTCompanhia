@@ -1,4 +1,4 @@
-## API REST - Conectando banco "Caompanhia de consertos"
+## API REST - Conectando banco "Companhia de consertos"
 
 Fiz uma API em node.js e express.js para integrar o banco de dados no projeto full stack da companhia de consertos, um sistema interno de uma mecânica de bairro, localizada em Mauá-SP.
 
