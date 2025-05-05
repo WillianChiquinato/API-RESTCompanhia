@@ -1,0 +1,262 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model adicionaisfuncionario {
+  Id_AdicionaisFuncionario Int           @id @default(autoincrement())
+  Nome                     String        @db.VarChar(255)
+  Valor                    Decimal       @db.Decimal(5, 2)
+  createdAt                DateTime      @db.DateTime(0)
+  updatedAt                DateTime      @db.DateTime(0)
+  funcionario              funcionario[]
+}
+
+model bairro {
+  Id_Bairro Int      @id @default(autoincrement())
+  Nome      String   @db.VarChar(255)
+  FK_Cidade Int?
+  createdAt DateTime @db.DateTime(0)
+  updatedAt DateTime @db.DateTime(0)
+  cidade    cidade?  @relation(fields: [FK_Cidade], references: [Id_Cidade], onDelete: Restrict, onUpdate: Restrict, map: "bairro_ibfk_1")
+  cep       cep[]
+
+  @@index([FK_Cidade], map: "FK_Cidade")
+}
+
+model carro {
+  Id_Carro     Int        @id @default(autoincrement())
+  NomeVeiculo  String     @db.VarChar(255)
+  Data_Criacao DateTime   @db.DateTime(0)
+  Imagem       String     @db.VarChar(255)
+  ValorTotal   Decimal    @db.Decimal(7, 2)
+  Descricao    String     @db.VarChar(255)
+  FK_TipoCarro Int?
+  createdAt    DateTime   @db.DateTime(0)
+  updatedAt    DateTime   @db.DateTime(0)
+  tipocarro    tipocarro? @relation(fields: [FK_TipoCarro], references: [Id_TipoCarro], onDelete: Restrict, onUpdate: Restrict, map: "carro_ibfk_1")
+  menu         menu[]
+
+  @@index([FK_TipoCarro], map: "FK_TipoCarro")
+}
+
+model cep {
+  Id_Cep    Int        @id @default(autoincrement())
+  NumeroCEP String     @db.VarChar(255)
+  FK_Bairro Int?
+  createdAt DateTime   @db.DateTime(0)
+  updatedAt DateTime   @db.DateTime(0)
+  bairro    bairro?    @relation(fields: [FK_Bairro], references: [Id_Bairro], onDelete: Restrict, onUpdate: Restrict, map: "cep_ibfk_1")
+  endereco  endereco[]
+
+  @@index([FK_Bairro], map: "FK_Bairro")
+}
+
+model cidade {
+  Id_Cidade Int      @id @default(autoincrement())
+  Nome      String   @db.VarChar(255)
+  FK_Estado Int?
+  createdAt DateTime @db.DateTime(0)
+  updatedAt DateTime @db.DateTime(0)
+  bairro    bairro[]
+  estado    estado?  @relation(fields: [FK_Estado], references: [Id_Estado], onDelete: Restrict, onUpdate: Restrict, map: "cidade_ibfk_1")
+
+  @@index([FK_Estado], map: "FK_Estado")
+}
+
+model despesa {
+  Id_Despesa      Int          @id @default(autoincrement())
+  NomeResponsavel String       @db.VarChar(255)
+  Data            DateTime     @db.DateTime(0)
+  Valor           Decimal      @db.Decimal(7, 2)
+  Descricao       String       @db.VarChar(255)
+  FK_TipoDespesa  Int?
+  createdAt       DateTime     @db.DateTime(0)
+  updatedAt       DateTime     @db.DateTime(0)
+  tipodespesa     tipodespesa? @relation(fields: [FK_TipoDespesa], references: [Id_TipoDespesa], onDelete: Restrict, onUpdate: Restrict, map: "despesa_ibfk_1")
+  menu            menu[]
+
+  @@index([FK_TipoDespesa], map: "FK_TipoDespesa")
+}
+
+model empresa {
+  Id_Empresa String     @id @db.Char(14)
+  Nome       String     @db.VarChar(255)
+  Endereco   String     @db.VarChar(255)
+  Telefone   String     @db.VarChar(255)
+  endereco   endereco[]
+  telefone   telefone[]
+  usuario    usuario[]
+}
+
+model endereco {
+  Id_Endereco     Int          @id @default(autoincrement())
+  Logradouro      String       @db.VarChar(255)
+  Numero          Int
+  Complemento     String?      @db.VarChar(255)
+  FK_Cep          Int
+  FK_TipoEndereco Int
+  FK_Empresa      String?      @db.Char(14)
+  FK_Funcionario  String?      @db.Char(11)
+  cep             cep          @relation(fields: [FK_Cep], references: [Id_Cep], onUpdate: Restrict, map: "endereco_ibfk_48")
+  tipoendereco    tipoendereco @relation(fields: [FK_TipoEndereco], references: [Id_TipoEndereco], onUpdate: Restrict, map: "endereco_ibfk_49")
+  empresa         empresa?     @relation(fields: [FK_Empresa], references: [Id_Empresa], onDelete: Restrict, onUpdate: Restrict, map: "endereco_ibfk_50")
+  funcionario     funcionario? @relation(fields: [FK_Funcionario], references: [Id_Funcionario], onDelete: Restrict, onUpdate: Restrict, map: "endereco_ibfk_51")
+
+  @@index([FK_Cep], map: "FK_Cep")
+  @@index([FK_Empresa], map: "FK_Empresa")
+  @@index([FK_Funcionario], map: "FK_Funcionario")
+  @@index([FK_TipoEndereco], map: "FK_TipoEndereco")
+}
+
+model estado {
+  Id_Estado Int      @id @default(autoincrement())
+  Nome      String   @db.VarChar(255)
+  createdAt DateTime @db.DateTime(0)
+  updatedAt DateTime @db.DateTime(0)
+  cidade    cidade[]
+}
+
+model extrair {
+  Id_Extrair  Int     @id @default(autoincrement())
+  NomeArquivo String  @db.VarChar(50)
+  FK_Inicio   Int?
+  inicio      inicio? @relation(fields: [FK_Inicio], references: [Id_Inicio], onDelete: Restrict, onUpdate: Restrict, map: "extrair_ibfk_1")
+
+  @@index([FK_Inicio], map: "FK_Inicio")
+}
+
+model funcionario {
+  Id_Funcionario           String                 @id @db.Char(11)
+  Nome                     String                 @db.VarChar(255)
+  Salario                  Decimal                @db.Decimal(7, 2)
+  Imagem                   String?                @db.VarChar(255)
+  Total_Salarios           Decimal?               @db.Decimal(10, 2)
+  FK_AdicionaisFuncionario Int?
+  createdAt                DateTime               @db.DateTime(0)
+  updatedAt                DateTime               @db.DateTime(0)
+  endereco                 endereco[]
+  adicionaisfuncionario    adicionaisfuncionario? @relation(fields: [FK_AdicionaisFuncionario], references: [Id_AdicionaisFuncionario], onDelete: Restrict, onUpdate: Restrict, map: "funcionario_ibfk_1")
+  menu                     menu[]
+  telefone                 telefone[]
+
+  @@index([FK_AdicionaisFuncionario], map: "FK_AdicionaisFuncionario")
+}
+
+model indicador {
+  Id_Indicador     Int            @id @default(autoincrement())
+  QuantidadeCarros Int
+  Faturamento      Decimal        @db.Decimal(7, 2)
+  Despesas         Decimal        @db.Decimal(7, 2)
+  Lucro            Decimal        @db.Decimal(7, 2)
+  TicketMedio      Decimal        @db.Decimal(10, 2)
+  FK_TipoIndicador Int?
+  createdAt        DateTime       @db.DateTime(0)
+  updatedAt        DateTime       @db.DateTime(0)
+  tipoindicador    tipoindicador? @relation(fields: [FK_TipoIndicador], references: [Id_TipoIndicador], onDelete: Restrict, onUpdate: Restrict, map: "indicador_ibfk_1")
+  menu             menu[]
+
+  @@index([FK_TipoIndicador], map: "FK_TipoIndicador")
+}
+
+model inicio {
+  Id_Inicio Int       @id @default(autoincrement())
+  Mes       String    @db.VarChar(10)
+  Ano       String    @db.VarChar(10)
+  createdAt DateTime  @db.DateTime(0)
+  updatedAt DateTime  @db.DateTime(0)
+  extrair   extrair[]
+}
+
+model menu {
+  Id_Menu        Int          @id @default(autoincrement())
+  Fk_Carro       Int?
+  FK_Funcionario String?      @db.Char(11)
+  FK_Despesa     Int?
+  FK_Indicador   Int?
+  carro          carro?       @relation(fields: [Fk_Carro], references: [Id_Carro], onDelete: Restrict, onUpdate: Restrict, map: "menu_ibfk_17")
+  funcionario    funcionario? @relation(fields: [FK_Funcionario], references: [Id_Funcionario], onDelete: Restrict, onUpdate: Restrict, map: "menu_ibfk_18")
+  despesa        despesa?     @relation(fields: [FK_Despesa], references: [Id_Despesa], onDelete: Restrict, onUpdate: Restrict, map: "menu_ibfk_19")
+  indicador      indicador?   @relation(fields: [FK_Indicador], references: [Id_Indicador], onDelete: Restrict, onUpdate: Restrict, map: "menu_ibfk_20")
+
+  @@index([FK_Despesa], map: "FK_Despesa")
+  @@index([FK_Funcionario], map: "FK_Funcionario")
+  @@index([FK_Indicador], map: "FK_Indicador")
+  @@index([Fk_Carro], map: "Fk_Carro")
+}
+
+model telefone {
+  Id_Telefone     Int           @id @default(autoincrement())
+  Telefone01      String        @db.VarChar(15)
+  Telefone02      String?       @db.VarChar(15)
+  FK_Empresa      String?       @db.Char(14)
+  FK_Funcionario  String?       @db.Char(11)
+  FK_TipoTelefone Int?
+  createdAt       DateTime      @db.DateTime(0)
+  updatedAt       DateTime      @db.DateTime(0)
+  empresa         empresa?      @relation(fields: [FK_Empresa], references: [Id_Empresa], onDelete: Restrict, onUpdate: Restrict, map: "telefone_ibfk_10")
+  funcionario     funcionario?  @relation(fields: [FK_Funcionario], references: [Id_Funcionario], onDelete: Restrict, onUpdate: Restrict, map: "telefone_ibfk_11")
+  tipotelefone    tipotelefone? @relation(fields: [FK_TipoTelefone], references: [Id_TipoTelefone], onDelete: Restrict, onUpdate: Restrict, map: "telefone_ibfk_12")
+
+  @@index([FK_Empresa], map: "FK_Empresa")
+  @@index([FK_Funcionario], map: "FK_Funcionario")
+  @@index([FK_TipoTelefone], map: "FK_TipoTelefone")
+}
+
+model tipocarro {
+  Id_TipoCarro Int      @id @default(autoincrement())
+  Descricao    String   @db.VarChar(255)
+  createdAt    DateTime @db.DateTime(0)
+  updatedAt    DateTime @db.DateTime(0)
+  carro        carro[]
+}
+
+model tipodespesa {
+  Id_TipoDespesa Int       @id @default(autoincrement())
+  TituloTipo     String    @db.VarChar(255)
+  createdAt      DateTime  @db.DateTime(0)
+  updatedAt      DateTime  @db.DateTime(0)
+  despesa        despesa[]
+}
+
+model tipoendereco {
+  Id_TipoEndereco Int        @id @default(autoincrement())
+  Descricao       String     @db.VarChar(255)
+  createdAt       DateTime   @db.DateTime(0)
+  updatedAt       DateTime   @db.DateTime(0)
+  endereco        endereco[]
+}
+
+model tipoindicador {
+  Id_TipoIndicador     Int         @id @default(autoincrement())
+  Nome                 String      @db.VarChar(255)
+  MetaCircularProgress Int
+  AtualizacaoAAtual    Int
+  createdAt            DateTime    @db.DateTime(0)
+  updatedAt            DateTime    @db.DateTime(0)
+  indicador            indicador[]
+}
+
+model tipotelefone {
+  Id_TipoTelefone Int        @id @default(autoincrement())
+  Descricao       String     @db.VarChar(255)
+  createdAt       DateTime   @db.DateTime(0)
+  updatedAt       DateTime   @db.DateTime(0)
+  telefone        telefone[]
+}
+
+model usuario {
+  id_Usuario Int       @id @default(autoincrement())
+  Login      String    @db.VarChar(255)
+  Senha      String    @db.VarChar(255)
+  FK_Empresa String?   @db.Char(14)
+  createdAt  DateTime? @db.DateTime(0)
+  updatedAt  DateTime? @db.DateTime(0)
+  empresa    empresa?  @relation(fields: [FK_Empresa], references: [Id_Empresa], onDelete: Restrict, map: "usuario_ibfk_1")
+
+  @@index([FK_Empresa], map: "FK_Empresa")
+}
