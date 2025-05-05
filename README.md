@@ -6,6 +6,7 @@ Fiz uma API em node.js e express.js para integrar o banco de dados no projeto fu
 
 **NODE.JS**
 **EXPRESS.JS**
+**PRISMA**
 **ROUTES**
 **DB CONNECTION**
 
