@@ -38,6 +38,7 @@ model carro {
   FK_TipoCarro Int?
   createdAt    DateTime   @db.DateTime(0)
   updatedAt    DateTime   @db.DateTime(0)
+  Proprietario String?    @db.VarChar(100)
   tipocarro    tipocarro? @relation(fields: [FK_TipoCarro], references: [Id_TipoCarro], onDelete: Restrict, onUpdate: Restrict, map: "carro_ibfk_1")
   menu         menu[]
 

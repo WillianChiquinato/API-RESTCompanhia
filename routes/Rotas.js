@@ -4,6 +4,7 @@ const GenericController = require('../controllers/GenericController');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+//
 // Lista de modelos e chaves primárias
 const models = [
     { name: 'adicionaisfuncionario', model: prisma.adicionaisfuncionario, pk: 'Id_AdicionaisFuncionario', type: 'int' },
