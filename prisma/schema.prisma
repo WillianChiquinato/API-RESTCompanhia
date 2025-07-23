@@ -8,12 +8,15 @@ datasource db {
 }
 
 model adicionaisfuncionario {
-  Id_AdicionaisFuncionario Int           @id @default(autoincrement())
-  Nome                     String        @db.VarChar(255)
-  Valor                    Decimal       @db.Decimal(5, 2)
-  createdAt                DateTime      @db.DateTime(0)
-  updatedAt                DateTime      @db.DateTime(0)
-  funcionario              funcionario[]
+  Id_AdicionaisFuncionario Int         @id @default(autoincrement())
+  Nome                     String      @db.VarChar(255)
+  Valor                    Decimal     @db.Decimal(5, 2)
+  createdAt                DateTime    @db.DateTime(0)
+  updatedAt                DateTime    @db.DateTime(0)
+  FK_Funcionario           String      @db.Char(11)
+  funcionario              funcionario @relation(fields: [FK_Funcionario], references: [Id_Funcionario], onDelete: Cascade, onUpdate: Restrict, map: "fk_adicionalfuncionario_ibfk_1")
+
+  @@index([FK_Funcionario], map: "fk_adicionalfuncionario_ibfk_1")
 }
 
 model bairro {
@@ -132,20 +135,16 @@ model extrair {
 }
 
 model funcionario {
-  Id_Funcionario           String                 @id @db.Char(11)
-  Nome                     String                 @db.VarChar(255)
-  Salario                  Decimal                @db.Decimal(7, 2)
-  Imagem                   String?                @db.VarChar(255)
-  Total_Salarios           Decimal?               @db.Decimal(10, 2)
-  FK_AdicionaisFuncionario Int?
-  createdAt                DateTime               @db.DateTime(0)
-  updatedAt                DateTime               @db.DateTime(0)
-  endereco                 endereco[]
-  adicionaisfuncionario    adicionaisfuncionario? @relation(fields: [FK_AdicionaisFuncionario], references: [Id_AdicionaisFuncionario], onDelete: Restrict, onUpdate: Restrict, map: "funcionario_ibfk_1")
-  menu                     menu[]
-  telefone                 telefone[]
-
-  @@index([FK_AdicionaisFuncionario], map: "FK_AdicionaisFuncionario")
+  Id_Funcionario        String                  @id @db.Char(11)
+  Nome                  String                  @db.VarChar(255)
+  Salario               Decimal                 @db.Decimal(7, 2)
+  Imagem                String?                 @db.VarChar(255)
+  createdAt             DateTime                @db.DateTime(0)
+  updatedAt             DateTime                @db.DateTime(0)
+  adicionaisfuncionario adicionaisfuncionario[]
+  endereco              endereco[]
+  menu                  menu[]
+  telefone              telefone[]
 }
 
 model indicador {
