@@ -141,6 +141,7 @@ model funcionario {
   Imagem                String?                 @db.VarChar(255)
   createdAt             DateTime                @db.DateTime(0)
   updatedAt             DateTime                @db.DateTime(0)
+  Descricao             String?                 @db.VarChar(255)
   adicionaisfuncionario adicionaisfuncionario[]
   endereco              endereco[]
   menu                  menu[]
